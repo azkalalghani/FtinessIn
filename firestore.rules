@@ -1,0 +1,68 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users collection - users can only access their own data
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Validation rules for user data
+      allow create: if request.auth != null && 
+                   request.auth.uid == userId &&
+                   validateUserData(request.resource.data);
+      
+      allow update: if request.auth != null && 
+                   request.auth.uid == userId &&
+                   validateUserData(request.resource.data);
+    }
+    
+    // Progress collection - weight entries for each user
+    match /progress/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Weight entries subcollection
+      match /entries/{entryId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+        
+        allow create: if request.auth != null && 
+                     request.auth.uid == userId &&
+                     validateWeightEntry(request.resource.data);
+        
+        allow update: if request.auth != null && 
+                     request.auth.uid == userId &&
+                     validateWeightEntry(request.resource.data);
+      }
+    }
+  }
+}
+
+// Validation functions
+function validateUserData(userData) {
+  return userData.keys().hasAll(['uid', 'email', 'name', 'age', 'gender', 'height', 'currentWeight', 'targetWeight', 'activityLevel', 'weightGoal']) &&
+         userData.uid is string &&
+         userData.email is string &&
+         userData.name is string &&
+         userData.age is number &&
+         userData.age > 0 &&
+         userData.age < 120 &&
+         userData.gender in ['male', 'female'] &&
+         userData.height is number &&
+         userData.height > 50 &&
+         userData.height < 300 &&
+         userData.currentWeight is number &&
+         userData.currentWeight > 20 &&
+         userData.currentWeight < 500 &&
+         userData.targetWeight is number &&
+         userData.targetWeight > 20 &&
+         userData.targetWeight < 500 &&
+         userData.activityLevel in ['sedentary', 'lightly_active', 'moderately_active', 'very_active', 'extremely_active'] &&
+         userData.weightGoal in ['lose', 'maintain', 'gain'];
+}
+
+function validateWeightEntry(entryData) {
+  return entryData.keys().hasAll(['weight', 'date', 'timestamp']) &&
+         entryData.weight is number &&
+         entryData.weight > 20 &&
+         entryData.weight < 500 &&
+         entryData.date is string &&
+         entryData.timestamp is timestamp;
+}
