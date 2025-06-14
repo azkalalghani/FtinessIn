@@ -2,7 +2,7 @@ package com.example.fitnessin.util
 
 object Constants {
     // Demo Mode untuk testing tanpa Firebase
-    const val DEMO_MODE = true // Set false untuk production dengan Firebase
+    const val DEMO_MODE = false // Set false untuk production dengan Firebase
 
     // Firebase Collections
     const val USERS_COLLECTION = "users"
