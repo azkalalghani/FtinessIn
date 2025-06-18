@@ -31,7 +31,7 @@ object Constants {
     const val WEIGHT_HISTORY_DISPLAY_LIMIT = 5
 
     // API Keys - Replace with your actual keys
-    const val GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE"
+    const val GEMINI_API_KEY = "AIzaSyAtPpiLMERQznakvetk3a2ivVKT3e6tsSE"
     const val GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/"
 
     // Date Formats
